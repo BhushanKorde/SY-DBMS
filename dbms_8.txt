@@ -1,0 +1,50 @@
+Step 1: Create Database and Table
+
+
+
+-- Create database
+CREATE DATABASE mngodb;
+USE mngodb;
+
+-- Create table 'employees'
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY AUTO_INCREMENT,
+    emp_name VARCHAR(100),
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+
+
+
+
+Step 2: CRUD Operations
+
+
+
+-- CREATE: Insert new employee records
+INSERT INTO employees (emp_name, department, salary) VALUES
+('Alice Johnson', 'HR', 55000.00),
+('Bob Smith', 'IT', 72000.00),
+('Carol White', 'Finance', 68000.00);
+
+
+-- READ: Select all employees
+SELECT * FROM employees;
+
+-- READ with condition: Select employees in IT department
+SELECT * FROM employees WHERE department = 'IT';
+
+
+-- UPDATE: Increase salary by 10% for all employees in Finance
+UPDATE employees
+SET salary = salary * 1.10
+WHERE department = 'Finance';
+
+
+-- DELETE: Remove employee named 'Bob Smith'
+DELETE FROM employees WHERE emp_name = 'Bob Smith';
+
+
+
+
+

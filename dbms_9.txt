@@ -1,0 +1,43 @@
+use schoolDB;
+
+// 1. Simple find: Get all students aged 16
+db.students.find({ age: 16 });
+
+// 2. Projection: Get only name and age fields for all students
+db.students.find({}, { name: 1, age: 1, _id: 0 });
+
+// 3. Logical query: Students who are either in grade 10 or enrolled in Biology
+db.students.find({ $or: [ { grade: 10 }, { subjects: "Biology" } ] });
+
+// 4. Using $and and comparison operators: Students aged between 15 and 18 in grade 11
+db.students.find({
+  $and: [
+    { age: { $gte: 15 } },
+    { age: { $lte: 18 } },
+    { grade: 11 }
+  ]
+});
+
+// 5. Query on array field: Students enrolled in Math and English subjects
+db.students.find({ subjects: { $all: ["Math", "English"] } });
+
+// 6. Query nested document: Students living in New York city
+db.students.find({ "address.city": "New York" });
+
+// 7. Using $exists: Find students with the "scores" field present
+db.students.find({ scores: { $exists: true } });
+
+// 8. Using $regex: Find students whose name starts with 'A'
+db.students.find({ name: { $regex: /^A/ } });
+
+// 9. Aggregation pipeline: Get average Math score of students in grade 10
+db.students.aggregate([
+  { $match: { grade: 10 } },
+  { $group: { _id: null, avgMathScore: { $avg: "$scores.Math" } } }
+]);
+
+// 10. Update query: Add "Physics" to subjects for student named 'Alice'
+db.students.updateOne(
+  { name: "Alice" },
+  { $addToSet: { subjects: "Physics" } }
+);

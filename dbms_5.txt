@@ -1,0 +1,35 @@
+DECLARE
+    v_customer_id   Customers.customer_id%TYPE;
+    v_customer_name Customers.name%TYPE;
+    v_order_count   INT;
+    CURSOR c_customers IS
+        SELECT customer_id, name FROM Customers;
+BEGIN
+    FOR rec IN c_customers LOOP
+        v_customer_id := rec.customer_id;
+        v_customer_name := rec.name;
+
+        -- Only process customers whose name starts with 'A'
+        IF v_customer_name LIKE 'A%' THEN
+            -- Count number of orders for this customer
+            SELECT COUNT(*) INTO v_order_count
+            FROM Orders
+            WHERE customer_id = v_customer_id;
+
+            -- Print the number of orders
+            DBMS_OUTPUT.PUT_LINE('Customer: ' || v_customer_name || ' - Orders: ' || v_order_count);
+
+            -- Raise an exception if no orders found
+            IF v_order_count = 0 THEN
+                RAISE_APPLICATION_ERROR(-20001, 'No orders found for ' || v_customer_name);
+            END IF;
+        END IF;
+    END LOOP;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No customer data found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/

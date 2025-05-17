@@ -1,0 +1,40 @@
+CREATE TABLE library_audit (
+    audit_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    operation_type VARCHAR(10),  -- 'UPDATE' or 'DELETE'
+    old_title VARCHAR(255),
+    old_author VARCHAR(255),
+    old_published_year INT,
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+Step 2: Trigger to track UPDATE & DELETE
+
+CREATE TRIGGER trg_library_changes
+BEFORE UPDATE OR DELETE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit (
+        book_id,
+        operation_type,
+        old_title,
+        old_author,
+        old_published_year,
+        change_date
+    )
+    VALUES (
+        OLD.book_id,
+        CASE
+            WHEN (OLD.book_id IS NOT NULL AND NEW.book_id IS NOT NULL) THEN 'UPDATE'
+            ELSE 'DELETE'
+        END,
+        OLD.title,
+        OLD.author,
+        OLD.published_year,
+        CURRENT_TIMESTAMP
+    );
+END;
+
+
+
+

@@ -1,0 +1,88 @@
+-- =============================================
+-- 1. CREATE DATABASE AND TABLES
+-- =============================================
+CREATE DATABASE enrollment_system;
+USE enrollment_system;
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    age INT
+);
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100),
+    credits INT
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+
+
+
+-- =============================================
+-- 2. INSERT SAMPLE DATA
+-- =============================================
+INSERT INTO Students (name, email, age) VALUES
+('Alice', 'alice123@gmail.com', 20),
+('Bob', 'bob_smith@yahoo.com', 22),
+('Charlie', 'charlie_cool@gmail.com', 19),
+('David', 'david.doe@gmail.com', 21),
+('Eva', 'eva1999@yahoo.com', 23);
+
+INSERT INTO Courses (course_name, credits) VALUES
+('DBMS', 4),
+('Operating Systems', 3),
+('Networks', 2),
+('Java Programming', 5);
+
+INSERT INTO Enrollments (student_id, course_id, enrollment_date) VALUES
+(1, 1, '2025-05-10'),
+(2, 2, '2025-05-11'),
+(3, 3, '2025-05-12'),
+(4, 1, '2025-05-13'),
+(5, 4, '2025-05-14');
+
+
+
+-- =============================================
+-- 3. DML QUERIES (UPDATE / DELETE / SELECT / INSERT)
+-- =============================================
+
+-- 1. SELECT with LIKE (wildcard %)
+SELECT * FROM Students WHERE email LIKE '%gmail.com';
+
+-- 2. SELECT with LIKE (wildcard _)
+SELECT * FROM Students WHERE name LIKE '_a%';
+
+-- 3. SELECT using BOOLEAN operator (AND)
+SELECT * FROM Students WHERE age > 20 AND name LIKE 'D%';
+
+-- 4. SELECT using BOOLEAN operator (OR)
+SELECT * FROM Courses WHERE credits = 5 OR course_name LIKE '%Systems%';
+
+-- 5. SELECT using Arithmetic operation (+)
+SELECT name, age + 1 AS age_next_year FROM Students;
+
+-- 6. SELECT with ORDER BY and arithmetic
+SELECT name, age, age * 12 AS age_in_months FROM Students ORDER BY age DESC;
+
+-- 7. UPDATE a student's email
+UPDATE Students SET email = 'updated_alice@gmail.com' WHERE name = 'Alice';
+
+-- 8. DELETE a course
+DELETE FROM Courses WHERE course_name = 'Networks';
+
+-- 9. INSERT a new student
+INSERT INTO Students (name, email, age) VALUES ('Frank', 'frank2025@gmail.com', 24);
+
+-- 10. INSERT new enrollment
+INSERT INTO Enrollments (student_id, course_id, enrollment_date) VALUES (6, 2, '2025-05-16');

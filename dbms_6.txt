@@ -1,0 +1,55 @@
+-- Old roll call table
+CREATE TABLE o_rollcall (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR2(100),
+    present CHAR(1) -- 'Y' or 'N'
+);
+
+-- New roll call table (similar structure)
+CREATE TABLE n_rollcall (
+    roll_no INT,
+    name VARCHAR2(100),
+    present CHAR(1)
+);
+
+
+DECLARE
+    -- Cursor with parameter for roll number
+    CURSOR c_new_rollcall(p_roll_no INT) IS
+        SELECT name, present FROM n_rollcall WHERE roll_no = p_roll_no;
+
+    v_name n_rollcall.name%TYPE;
+    v_present n_rollcall.present%TYPE;
+    v_exists INT;
+BEGIN
+    -- Loop through all records in n_rollcall
+    FOR rec IN (SELECT roll_no FROM n_rollcall) LOOP
+
+        -- Check if the roll number exists in o_rollcall
+        SELECT COUNT(*) INTO v_exists FROM o_rollcall WHERE roll_no = rec.roll_no;
+
+        -- Open the cursor with current roll number
+        OPEN c_new_rollcall(rec.roll_no);
+        FETCH c_new_rollcall INTO v_name, v_present;
+        CLOSE c_new_rollcall;
+
+        IF v_exists = 0 THEN
+            -- Insert if not present in o_rollcall
+            INSERT INTO o_rollcall (roll_no, name, present)
+            VALUES (rec.roll_no, v_name, v_present);
+        ELSE
+            -- Update if already present
+            UPDATE o_rollcall
+            SET name = v_name,
+                present = v_present
+            WHERE roll_no = rec.roll_no;
+        END IF;
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Data merged successfully.');
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/

@@ -1,0 +1,21 @@
+DELIMITER //
+
+CREATE TRIGGER product_price_audit_trigger
+BEFORE UPDATE ON Product
+FOR EACH ROW
+BEGIN
+    INSERT INTO Product_price_history (
+        product_id,
+        product_name,
+        supplier_name,
+        unit_price
+    )
+    VALUES (
+        OLD.product_id,
+        OLD.product_name,
+        OLD.supplier_name,
+        OLD.unit_price
+    );
+END //
+
+DELIMITER ;

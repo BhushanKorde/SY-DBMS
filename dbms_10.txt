@@ -1,0 +1,50 @@
+use companyDB;
+
+/////////////////////// CREATE OPERATIONS ///////////////////////
+
+// Insert one document
+db.employees.insertOne({
+  emp_id: 1,
+  name: "John Doe",
+  department: "HR",
+  salary: 55000
+});
+
+// Insert multiple documents
+db.employees.insertMany([
+  { emp_id: 2, name: "Jane Smith", department: "IT", salary: 72000 },
+  { emp_id: 3, name: "Mike Johnson", department: "Finance", salary: 68000 }
+]);
+
+/////////////////////// READ OPERATIONS ///////////////////////
+
+// Find all documents
+db.employees.find().pretty();
+
+// Find employees in IT department
+db.employees.find({ department: "IT" }).pretty();
+
+// Find employee by emp_id
+db.employees.findOne({ emp_id: 2 });
+
+/////////////////////// UPDATE OPERATIONS ///////////////////////
+
+// Update salary of employee with emp_id 1
+db.employees.updateOne(
+  { emp_id: 1 },
+  { $set: { salary: 60000 } }
+);
+
+// Update department for multiple employees
+db.employees.updateMany(
+  { department: "Finance" },
+  { $set: { department: "Accounting" } }
+);
+
+/////////////////////// DELETE OPERATIONS ///////////////////////
+
+// Delete one employee by emp_id
+db.employees.deleteOne({ emp_id: 3 });
+
+// Delete all employees in HR department
+db.employees.deleteMany({ department: "HR" });

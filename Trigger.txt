@@ -1,0 +1,57 @@
+CREATE TABLE library (
+    book_no INT PRIMARY KEY,
+    book_name VARCHAR(100),
+    book_publisher VARCHAR(100),
+    book_count INT
+);
+
+
+CREATE TABLE library_audit (
+    action_type VARCHAR(10), -- 'UPDATE' or 'DELETE'
+    book_no INT,
+    book_name VARCHAR(100),
+    book_publisher VARCHAR(100),
+    book_count INT
+);
+
+
+INSERT INTO library (book_no, book_name, book_publisher, book_count) VALUES
+(101, 'The Alchemist', 'HarperCollins', 5),
+(102, 'Wings of Fire', 'Universities Press', 3),
+(103, 'Think and Grow Rich', 'Penguin', 4),
+(104, 'Clean Code', 'Prentice Hall', 2),
+(105, 'Atomic Habits', 'Penguin', 6);
+
+
+
+SELECT * FROM library;
+
+
+
+
+DELIMITER //
+
+-- AFTER UPDATE trigger
+CREATE TRIGGER after_library_update
+AFTER UPDATE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit (action_type, book_no, book_name, book_publisher, book_count)
+    VALUES ('UPDATE', OLD.book_no, OLD.book_name, OLD.book_publisher, OLD.book_count);
+END;
+//
+
+
+
+
+
+
+
+CREATE TRIGGER after_library_delete
+AFTER DELETE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit (action_type, book_no, book_name, book_publisher, book_count)
+    VALUES ('DELETE', OLD.book_no, OLD.book_name, OLD.book_publisher, OLD.book_count);
+END;
+//

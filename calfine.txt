@@ -1,0 +1,77 @@
+create table library(roll int primary key , date_issue date , name_book varchar(40) , status char); 
+ 
+create table fine(roll int , foreign key(roll) references library(roll) , date_return date , amount int ); 
+ 
+     
++------+------------+-----------+--------+ 
+| roll | date_issue | name_book | status | 
++------+------------+-----------+--------+ 
+|    1 | 2024-02-23 | python    | I      | 
+|    2 | 2024-03-23 | java         | I      | 
+|    3 | 2024-03-01 | cpp          | I      | 
+|    4 | 2024-01-12 | cpp          | I      | 
+|    5 | 2025-01-12 | html        | I      | 
+|    6 | 2025-01-14 | php         | I      | 
+|    7 | 2025-02-14 | love        | I      | 
+|    8 | 2025-02-24 | life          | I      | 
+|    9 | 2025-02-24 | travel      | I      | 
+|   10 | 2025-03-20 | bug       | I      | 
++------+------------+-----------+--------+ 
+ 
+ 
+ 
+ 
+delimiter // 
+create procedure calfine1(rno int , n_book varchar(40)) 
+begin 
+declare days int; 
+declare fine_amt int; 
+declare date1 date; 
+select date_issue into date1 from library where roll=rno and name_book = n_book; 
+set days=datediff(curdate(),date1); 
+if days > 15 and days < 30 then 
+set fine_amt=(days-15)*5; 
+end if; 
+if days > 30 then 
+set fine_amt =((days-15)-(days-30))*5+(days-30)*50; 
+end if; 
+select concat('fine is',fine_amt); 
+if fine_amt > 0 then 
+insert into fine values(rno,curdate(),fine_amt); 
+update library set status = 'R' where roll=rno; 
+end if; 
+end 
+// 
+ 
+ 
+source /home/student/calfine.sql 
+ 
+ 
+ 
+ 
+ 
+call calfine1(1,'python'); 
+    -> // 
++----------------------------+ 
+| concat('fine is',fine_amt) | 
++----------------------------+ 
+| fine is 18175               | 
+ 
+ 
+ 
+select * from library; 
+    -> // 
++------+------------+-----------+--------+ 
+| roll | date_issue | name_book | status | 
++------+------------+-----------+--------+ 
+|    1 | 2024-02-23 | python    | R      | 
+|    2 | 2024-03-23 | java         | I      | 
+|    3 | 2024-03-01 | cpp          | I      | 
+|    4 | 2024-01-12 | cpp          | I      | 
+|    5 | 2025-01-12 | html        | I      | 
+|    6 | 2025-01-14 | php         | I      | 
+|    7 | 2025-02-14 | love        | I      | 
+|    8 | 2025-02-24 | life         | I      | 
+|    9 | 2025-02-24 | travel     | I      | 
+|   10 | 2025-03-20 | bug       | I      | 
++------+------------+-----------+--------+ 

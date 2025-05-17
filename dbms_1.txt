@@ -1,0 +1,76 @@
+-- =========================================
+-- 1. CREATE DATABASE AND USE IT
+-- =========================================
+CREATE DATABASE enrollment_system;
+
+USE enrollment_system;
+
+
+
+-- =========================================
+-- 2. CREATE TABLES (DDL COMMANDS)
+-- =========================================
+
+-- Create Students Table
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    age INT
+);
+
+-- Create Courses Table
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100),
+    credits INT
+);
+
+-- Create Enrollments Table (Many-to-Many Relationship)
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+
+
+
+-- =========================================
+-- 3. INSERT SAMPLE DATA INTO TABLES
+-- =========================================
+
+-- Insert Students
+INSERT INTO Students (name, email, age) VALUES
+('Alice', 'alice@example.com', 20),
+('Bob', 'bob@example.com', 22);
+
+-- Insert Courses
+INSERT INTO Courses (course_name, credits) VALUES
+('DBMS', 4),
+('Operating Systems', 3);
+
+-- Insert Enrollments
+INSERT INTO Enrollments (student_id, course_id, enrollment_date) VALUES
+(1, 1, '2025-05-16'),
+(2, 2, '2025-05-16');
+
+
+
+-- =========================================
+-- 4. ACL (ACCESS CONTROL LIST) COMMANDS
+-- =========================================
+
+-- Create Read-Only User for Viewing Students and Courses
+CREATE USER 'student_user'@'localhost' IDENTIFIED BY 'password123';
+GRANT SELECT ON enrollment_system.Students TO 'student_user'@'localhost';
+GRANT SELECT ON enrollment_system.Courses TO 'student_user'@'localhost';
+
+-- Create Admin User with Full Access
+CREATE USER 'admin_user'@'localhost' IDENTIFIED BY 'adminpass';
+GRANT ALL PRIVILEGES ON enrollment_system.* TO 'admin_user'@'localhost';
+
+-- Apply Privilege Changes
+FLUSH PRIVILEGES;
